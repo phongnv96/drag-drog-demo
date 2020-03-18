@@ -1,0 +1,77 @@
+<h2>NGX-DROP-DRAG</h2>
+<div class="dndPlaceholder col-3" #placeholder></div>
+<!-- 
+<div class="row">
+  <div class="col-md-6 d-flex flex-row" 
+    [dndList]
+    [dndPlaceholder]="placeholder" 
+    [dndModel]="simpleList[0]">
+    <div *ngFor="let item of simpleList[0]" class="col-md-4" 
+      [dndType]="'item'"
+      (dndMoved)="removeItem(item, simpleList[0])" 
+      [dndDraggable] 
+      [dndObject]="item">{{item.title}}</div>
+  </div>
+  <div class="col-md-6" 
+    [dndList] 
+    [dndModel]="simpleList[1]" 
+    [dndPlaceholder]="placeholder">
+    <div *ngFor="let item of simpleList[1]" class="col-md-12" 
+      [dndType]="'item'"
+      (dndMoved)="removeItem(item, simpleList[1])" 
+      [dndDraggable] 
+      [dndObject]="item">{{item.title}}</div>
+  </div>
+</div> -->
+<ng-container *ngFor="let row of simpleList">
+  <div [dndList] 
+       [dndPlaceholder]="placeholder" 
+       [dndModel]="row" 
+       class="row">
+    <ng-container *ngFor="let items of row">
+      <div [dndType]="'item'" 
+           (dndMoved)="removeItem(items, row)" 
+           [dndDraggable] 
+           [dndObject]="items" class="col-3 m-2">
+        {{items.title}}
+      </div>
+    </ng-container>
+  </div>
+</ng-container>
+
+
+<!-- <div class="col-md-9"> -->
+  <!-- <div ngfor class="row"> -->
+    <div *ngFor="let dropzone of nestedList" class="col-12">
+      <!-- <div class="dropzone box box-yellow "> -->
+        
+        <!-- <h3>Dropzone {{i + 1}}</h3> -->
+        <div [dndList]="{
+          allowedTypes: ['item','container']}"
+          [dndModel]="dropzone"
+          [dndPlaceholder]="placeholder" 
+          class="row">
+          <ng-container *ngIf="dropzone.length; else elseTemplate">
+            <ng-container *ngFor="let item of dropzone">
+              <app-group class="col-6" *ngIf="item.isHasChildItem"
+                [list]="dropzone"
+                [model]="item"></app-group>
+              <div *ngIf="!item.isHasChildItem"
+                [dndType]="item.type"
+                [dndDraggable]
+                (dndMoved)="removeItem(item, dropzone)"
+                [dndObject]="item"
+                class="col-3 item-ngx" >{{item.type}} {{item.id}}</div>
+            </ng-container>
+          </ng-container>
+          <ng-template #elseTemplate>
+            <div class="max-width"></div>
+          </ng-template>
+          
+         
+        </div>
+      <!-- </div> -->
+    </div>
+  <!-- </div> -->
+
+<!-- </div> -->

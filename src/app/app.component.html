@@ -3,18 +3,137 @@
   <h1>
     Welcome to {{ title }}!
   </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
+<div id='parent' class="p-5">
+  <ng-template>
+
+    <ng-container *ngFor="let todoItem of listTodo">
+      <div id="{{todoItem.id}}" 
+        cdkDropList 
+        [cdkDropListData]="todoItem.items"
+        class="example-list row" 
+        (cdkDropListDropped)="drop($event)"
+        [cdkDropListConnectedTo]="listGroupConnectTo(todoItem.id)">
+        <ng-container *ngFor="let item of todoItem.items">
+          <ng-container *ngIf="item.isHasGroup; else nomalItem">
+            <div cdkDrag class="col-6 example-box">
+              <div id='{{item.group.id}}' 
+                cdkDropList 
+                [cdkDropListData]="item.group.items" 
+                class="row groupp-items" 
+                (cdkDropListDropped)="drop($event)"
+                [cdkDropListConnectedTo]="listGroupConnectTo(item.group.id)">
+                <ng-container *ngFor="let item of item.group.items">
+                  <app-item class="col-6 example-box height-item"  cdkDrag [title]="item.title" [color]="item.color">
+                    <div class="example-handle" cdkDragHandle>
+                      <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                          d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                        </path>
+                        <path d="M0 0h24v24H0z" fill="none"></path>
+                      </svg>
+                    </div>
+                  </app-item>
+                </ng-container>
+              </div>
+              <div class="example-handle" cdkDragHandle>
+                <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                  </path>
+                  <path d="M0 0h24v24H0z" fill="none"></path>
+                </svg>
+              </div>
+            </div>
+          </ng-container>
+          <ng-template #nomalItem>
+            <app-item class="col-3 example-box height-item" cdkDrag [title]="item.title" [color]="item.color">
+              <div class="example-handle" cdkDragHandle>
+                <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                  </path>
+                  <path d="M0 0h24v24H0z" fill="none"></path>
+                </svg>
+              </div>
+            </app-item>
+          </ng-template>
+        </ng-container>
+
+        <span (click)="addOrRemoveRow()" class="button-add-row ">Add</span>
+      </div>
+    </ng-container>
+
+    <!-- waiting filed -->
+    <div class="row waiting-field">
+      <div class="col-12">
+        <div id='watingField' 
+          cdkDropList 
+          [cdkDropListData]="watingField"
+          (cdkDropListDropped)="drop($event)"
+          [cdkDropListConnectedTo]="listGroupConnectTo('watingField')"
+          class="example-list-waiting row" 
+        >
+          <ng-container *ngFor="let item of watingField">
+            <ng-container *ngIf="item.isHasGroup; else watingFieldNoneGroup">
+              <div cdkDrag  [cdkDragDisabled]='true' class="col-6 example-box">
+                <div id='{{item.group.id}}' 
+                  cdkDropList 
+                  [cdkDropListData]="item.group.items" 
+                  (cdkDropListDropped)="drop($event)"
+                  [cdkDropListConnectedTo]="listGroupConnectTo(item.group.id)"
+                  class="row groupp-items " 
+                  >
+                  <ng-container *ngFor="let item of item.group.items">
+                    <app-item class="col-6  example-box height-item" cdkDrag [title]="item.title" [color]="item.color">
+                      <div class="example-handle" cdkDragHandle>
+                        <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                          <path
+                            d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                          </path>
+                          <path d="M0 0h24v24H0z" fill="none"></path>
+                        </svg>
+                      </div>
+                    </app-item>
+                  </ng-container>
+                </div>
+                <div class="example-handle" cdkDragHandle>
+                  <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                    </path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                </div>
+              </div>
+
+            </ng-container>
+            <ng-template #watingFieldNoneGroup>
+              <app-item class="col-3 height-item example-box" cdkDrag [title]="item.title" [color]="item.color">
+                <div class="example-handle" cdkDragHandle>
+                  <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                    </path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                </div>
+              </app-item>
+            </ng-template>
+
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <button (click)="addNewItem()">Add new item</button>
+      <button class="ml-2" (click)="addNewGroup()">Add new group</button>
+    </div>
+
+  </ng-template>
+
+  <app-ngx-drop-drag-demo></app-ngx-drop-drag-demo>
+
+</div>
